@@ -55,15 +55,52 @@ class App extends Component {
     return score;
   };
 
+  handleReload = () => {
+    let allScores = JSON.parse(localStorage.getItem("scores"));
+
+    if (allScores) {
+      allScores.push(this.getScore());
+      localStorage.setItem("scores", JSON.stringify(allScores));
+    } else {
+      localStorage.setItem("scores", JSON.stringify([this.getScore()]));
+    }
+
+    this.setState({
+      questions: Object.keys(QUESTIONS).map((q) => ({
+        number: q,
+        question: QUESTIONS[q],
+        yes: false,
+        no: false,
+        answered: false,
+      })),
+    });
+  };
+
+  average = (arr) => {
+    let total = 0;
+    let count = 0;
+
+    arr.forEach(function (item, index) {
+      total += item;
+      count++;
+    });
+
+    return total / count;
+  };
+
   render() {
     return (
       <div className="main__wrap">
         <main className="container">
-          <div>TODO</div>
+          <div>
+            TODO<button onClick={this.handleReload}>Reload</button>
+          </div>
           <h3>Score: {this.getScore()}</h3>
           <h3>
             Average score{" "}
-            {localStorage.getItem("score") ? localStorage.getItem("score") : 0}
+            {localStorage.getItem("scores")
+              ? this.average(JSON.parse(localStorage.getItem("scores")))
+              : 0}
           </h3>
           <div>
             {this.state.questions.map((q) => (
